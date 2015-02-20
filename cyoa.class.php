@@ -224,6 +224,7 @@ class CYOA
 			if( $first ) {
 				$first = false; 
 				echo '<tr>';
+				echo '<th>Actions</th>';
 				foreach( $row as $key=>$col ) {
 					echo '<th>'. $key . '</th>';
 				}	
@@ -232,7 +233,15 @@ class CYOA
 
 			// Print data. 
 			echo '<tr>';
-			foreach( $row as $col ) {
+			foreach( $row as $key=>$col ) {
+				// Print the actions for this data. 
+				if( $key == 'id' ) {
+					echo '<td>';
+					echo '<a href="?storyid='. $col.'">Goto</a> | ';
+					echo '<a href="?action=delete&storyid='. $col.'" onclick="return confirm(\'Are you sure you want to delete this StoryNode?\')" >Delete</a> ';
+					echo '</td>';	
+				}
+				// Print the actual value 
 				echo '<td>'. $col . '</td>';
 			}
 		  echo '</tr>';
