@@ -47,8 +47,14 @@ class CYOA
 		// $this->InsertStoryNode( array( 'parent'=>"1",'user'=>"1",'title'=>"Turn right",'body'=>"This is the body after you turn right") ) ; 
 		// $this->InsertStoryNode( array( 'parent'=>"1",'user'=>"1",'title'=>"Turn left",'body'=>"This is the body after you turn left") ) ; 
 
+  }
 
+  private function Clean( $input ) {
 
+  	// ToDo: 
+  	// Just a warning, you should not use this type of regexp to sanitize user input for a website. 
+  	// There is just too many ways to get around it. For sanitizing use something like the http://htmlpurifier.org/ library
+  	return preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $input );
   }
 
 
@@ -66,10 +72,10 @@ class CYOA
 		// Get the story node 
 		$sql = 'INSERT INTO story ( parent, title, body, user ) VALUES ( :parent,:title,:body, :user ) ;' ; 
 		$statement = $this->db->prepare($sql);
-		$statement->bindValue(':parent', $storyNode['parent'] );
-		$statement->bindValue(':title', $storyNode['title'] );
-		$statement->bindValue(':body', $storyNode['body'] );
-		$statement->bindValue(':user', $storyNode['user'] );
+		$statement->bindValue(':parent', $this->Clean( $storyNode['parent'] ) );
+		$statement->bindValue(':title', $this->Clean( $storyNode['title'] ) ) ;
+		$statement->bindValue(':body', $this->Clean( $storyNode['body'] ) ) ;
+		$statement->bindValue(':user', $this->Clean( $storyNode['user'] ) ) ;
 		
 		if( $statement->execute() == FALSE ) {
 			echo "Error: Could not insert the story node\n"; 
