@@ -19,28 +19,29 @@ class CYOA
 	private $db ; 
 
 	function __construct() {
-  	// Open the database. 
-  	$this->db = new MyDB(); 
+	  	// Open the database. 
+	  	$this->db = new MyDB(); 
 
-  	// Check the database 
-  	$this->SystemCheck(); 
+	  	// Check the database 
+	  	$this->SystemCheck(); 
   }
 
   /**
    * Checks to see if the database has been created. 
    * If not, creates it. 
    */
-  private function SystemCheck() {
-  	if( is_null( $this->db) ) {
-  		echo "Error: No database connection\n"; 
-  		die(); 
-  	}
+  private function SystemCheck() 
+  {
+	  	if( is_null( $this->db) ) {
+	  		echo "Error: No database connection\n"; 
+	  		die(); 
+	  	}
 
-  	// Create the data if neede. 
-  	$sql = 'CREATE TABLE IF NOT EXISTS story (id INTEGER  PRIMARY KEY ASC, parent INTEGER , user INTEGER , title TEXT, body TEXT )' ; 
+	  	// Create the data if neede. 
+	  	$sql = 'CREATE TABLE IF NOT EXISTS story (id INTEGER  PRIMARY KEY ASC, parent INTEGER , user INTEGER , title TEXT, body TEXT )' ; 
 		if( ! $this->db->exec( $sql) ) {
 			echo "Error: Could not query the database with this sql statment. \n". $sql ."\n"; 
-  		die(); 	
+			die(); 	
 		}
 
 		// Create temp data if needed 
@@ -57,8 +58,14 @@ class CYOA
   	return preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $input );
   }
 
+  private function Markdown( $input ) {
+  	// This will be replaced with a MarkDown parser. 
+  	return str_replace( "\n", "<br />\n", $input ); 
+  }
 
- 	private function InsertStoryNode ( $storyNode ) {
+
+ 	private function InsertStoryNode ( $storyNode ) 
+ 	{
 
  		if( ! isset( $storyNode['parent'] ) || 
 	 			! isset( $storyNode['title']  ) || 
@@ -177,11 +184,11 @@ class CYOA
 		}
 
 		// Print the story to the screen 
-		echo '<p>'. $storyNode['body'] .'</p>' ; 
+		echo '<p>'. $this->Markdown( $storyNode['body'] ) .'</p>' ; 
 
 		// Print the stories childern to the screen. 
 		if( isset( $storyNode['children'] ) ) {
-			echo 'What do you want to do next?<br />';
+			echo '<strong>What do you want to do next?</strong><br />';
 			echo '<ul>';
 			foreach ( $storyNode['children'] as $childStoryNode ) {
 				echo '<li><a href="?storyid='. $childStoryNode['id'] .'">'. $childStoryNode['title'] . '</a></li>'; 
@@ -197,19 +204,17 @@ class CYOA
  		echo '<input type="hidden" name="user" value="1" />';
  		echo '<input type="hidden" name="parent" value="'. $request['storyid'] .'" />';
  		echo '<table>';
- 		echo '<tr><td>Title</td><td><input type="text" name="title"></td></tr>';
- 		echo '<tr><td>Body</td><td><textarea name="body"></textarea></td></tr>';
+ 		echo '<tr><th valign="top">Choice</th><td><input type="text" name="title"></td></tr>';
+ 		echo '<tr><th valign="top">Body</th><td><textarea style="width: 400px; height: 200px;" name="body"></textarea></td></tr>';
  		echo '</table>';
  		echo '<input type="submit">';
 		echo '</form>';
-
-
-
 	}
 
 
 	private function Debug() 
 	{
+		return ; 
 		// Get the story node 
 		echo "\nFull story database dump\n";
 		$sql = 'SELECT * FROM story ;' ; 
